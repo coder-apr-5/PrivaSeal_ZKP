@@ -1,20 +1,32 @@
 const express = require('express');
+const { protect, authorize } = require('../middleware/authMiddleware');
 const {
+    getDashboardStats,
     getPendingRequests,
+    getRequestDetails,
     approveRequest,
     rejectRequest,
-    getIssuedCredentials
+    getPendingVerifiers,
+    approveVerifier,
+    getAuditLogs,
+    getApprovedVerifiers,
+    deleteVerifier
 } = require('../controllers/issuer.controller');
-const { protect, authorize } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 router.use(protect);
 router.use(authorize('issuer'));
 
-router.get('/pending-requests', getPendingRequests);
-router.post('/approve/:requestId', approveRequest);
-router.post('/reject/:requestId', rejectRequest);
-router.get('/issued-credentials', getIssuedCredentials);
+router.get('/dashboard/stats', getDashboardStats);
+router.get('/requests/pending', getPendingRequests);
+router.get('/requests/pending/:id', getRequestDetails);
+router.post('/requests/approve/:id', approveRequest);
+router.post('/requests/reject/:id', rejectRequest);
+router.get('/verifiers/pending', getPendingVerifiers);
+router.get('/verifiers/list', getApprovedVerifiers);
+router.post('/verifiers/approve/:firebaseUID', approveVerifier);
+router.delete('/verifiers/delete/:firebaseUID', deleteVerifier);
+router.get('/audit', getAuditLogs);
 
 module.exports = router;

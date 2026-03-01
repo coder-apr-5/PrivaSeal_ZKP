@@ -1,14 +1,13 @@
 const express = require('express');
-const { submitRequest, getMyRequests, getMyCredentials } = require('../controllers/wallet.controller');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
+const { submitRequest, getDashboardInfo, getCredentials, getActivity } = require('../controllers/wallet.controller');
 
 const router = express.Router();
 
-router.use(protect);
-router.use(authorize('holder'));
-
-router.post('/request-identity', submitRequest);
-router.get('/my-requests', getMyRequests);
-router.get('/my-credentials', getMyCredentials);
+router.post('/request', protect, authorize('holder'), submitRequest);
+router.get('/dashboard', protect, authorize('holder'), getDashboardInfo);
+router.get('/list', protect, authorize('holder'), getCredentials);
+router.get('/activity', protect, authorize('holder'), getActivity);
 
 module.exports = router;
