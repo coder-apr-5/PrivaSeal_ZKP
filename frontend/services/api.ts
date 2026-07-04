@@ -123,6 +123,25 @@ export const api = {
             if (!res.ok) throw new Error("Failed to fetch dashboard info");
             return await res.json();
         },
+        getStats: async (uid?: string) => {
+            try {
+                const res = await fetch(`${API_BASE}/api/verifier/dashboard`, { headers: getHeaders(uid) });
+                if (!res.ok) return { totalRequests: 0, verified: 0, failed: 0, pending: 0, successRate: 0 };
+                const json = await res.json();
+                const data = json.data || {};
+                const totalScans = data.totalScans || 0;
+                const totalValid = data.totalValid || 0;
+                return {
+                    totalRequests: totalScans,
+                    verified: totalValid,
+                    failed: totalScans - totalValid,
+                    pending: 0,
+                    successRate: totalScans ? Math.round((totalValid / totalScans) * 100) : 0
+                };
+            } catch (err) {
+                return { totalRequests: 0, verified: 0, failed: 0, pending: 0, successRate: 0 };
+            }
+        },
         verifyCredential: async (uid: string, credentialId: string) => {
             const res = await fetch(`${API_BASE}/api/verifier/verify`, {
                 method: "POST",
