@@ -142,6 +142,22 @@ export const api = {
                 return { totalRequests: 0, verified: 0, failed: 0, pending: 0, successRate: 0 };
             }
         },
+        createRequest: async (predicate: string, verifierId: string, verifierName: string) => {
+            // Generate a local QR payload for the wallet app to scan
+            const requestId = "req-" + Math.random().toString(36).substring(2, 9);
+            const qrPayload = JSON.stringify({
+                requestId,
+                predicate,
+                verifierId,
+                verifierName,
+                timestamp: Date.now()
+            });
+            return {
+                requestId,
+                predicate,
+                qrCode: qrPayload
+            };
+        },
         verifyCredential: async (uid: string, credentialId: string) => {
             const res = await fetch(`${API_BASE}/api/verifier/verify`, {
                 method: "POST",
